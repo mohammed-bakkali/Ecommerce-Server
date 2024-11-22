@@ -1,13 +1,30 @@
 const express = require("express");
-const app = express();
 const dotenv = require("dotenv");
+const morgan = require("morgan");
+
 dotenv.config({ path: "config.env" });
+
 const PORT = process.env.PORT;
+const dbConnection = require("./config/database");
+const categoryRoute = require("./routes/categoryRoute");
+
+// Connect witch db
+dbConnection();
+
+// express app
+const app = express();
 
 // Middleware
 app.use(express.json());
 
-// Routes
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+  console.log(`mode: ${process.env.NODE_ENV}`);
+}
+
+// Mount Routes
+app.use("/api/v1/categories", categoryRoute);
+
 app.get("/", (req, res) => {
   res.send("Welcome to the Ecommerce API V2");
 });
