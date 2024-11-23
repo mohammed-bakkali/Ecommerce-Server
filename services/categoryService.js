@@ -1,21 +1,30 @@
 const slugif = require("slugify");
-const CategoryModel = require("../models/categoryModel");
 const { default: slugify } = require("slugify");
 const asyncHandler = require("express-async-handler");
+
+const CategoryModel = require("../models/categoryModel");
 
 // @ desc   Get list of categores
 // @ desc   GET /api/V1/categories
 // @access  Public
-exports.getCategores = asyncHandler(async (req, res) => {
+exports.getCategories = asyncHandler(async (req, res) => {
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 5;
   const skip = (page - 1) * limit;
   const categories = await CategoryModel.find({}).skip(skip).limit(limit);
   res.status(200).json({ results: categories.length, page, data: categories });
 });
-// @ desc   Get specific category bu id
-// @ desc   POST /api/V1/categories
-// @access  Private
+// @ desc   Get specific category by id
+// @ desc   GET /api/v1/categories/:id
+// @access  Public
+exports.getCategory = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const category = await CategoryModel.findById(id);
+  if (!category) {
+    res.status(404).json({ msg: `No category found for this ID: ${id}` });
+  }
+  res.status(200).json({ data: category });
+});
 
 // @ desc   Create category
 // @ desc   POST /api/V1/categories
@@ -24,4 +33,36 @@ exports.createCategory = asyncHandler(async (req, res) => {
   const name = req.body.name;
   const category = await CategoryModel.create({ name, slug: slugify(name) });
   res.status(201).json({ data: category });
+});
+
+// @ desc   Update specific category
+// @ desc   PUT /api/V1/categories/:id
+// @access  Private
+exports.updateCategory = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  const category = await CategoryModel.findOneAndUpdate(
+    { _id: id },
+    { name, slug: slugify(name) },
+    { new: true }
+  );
+
+  if (!category) {
+    res.status(404).json({ msg: `No Category for this id ${id}` });
+  }
+  res.status(200).json({ data: category });
+});
+
+// @ desc   Delete specific category
+// @ desc   DELETE /api/V1/categories/:id
+// @access  Private
+exports.deleteCategory = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const category = await CategoryModel.findByIdAndDelete(id);
+
+  if (!category) {
+    res.status(404).json({ msg: `No Category for this id ${id}` });
+  }
+  res.status(204).send();
 });
