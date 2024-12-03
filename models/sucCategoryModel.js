@@ -21,5 +21,5 @@ const subCategorySchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-// Converting a schema into a model
+// exports and  Converting a schema into a model
 module.exports = mongoose.model("SubCategory", subCategorySchema);
