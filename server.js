@@ -3,8 +3,9 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 
 dotenv.config({ path: "config.env" });
+const ApiError = require("./utils/apiError");
+const globalError = require("./middlewares/errorMiddleware");
 
-const PORT = process.env.PORT;
 const dbConnection = require("./config/database");
 const categoryRoute = require("./routes/categoryRoute");
 
@@ -27,21 +28,31 @@ app.use("/api/v1/categories", categoryRoute);
 
 app.all("*", (req, res, next) => {
   // Create error and send it to error handling middleware
-  // const err = new Error(`Cant find this route: ${req.originalUrl}`);
+  // const err = new Error(`Can't find this route: ${req.originalUrl}`);
   // next(err.message);
-  next(new ApiError("message", statusCode));
+  next(new ApiError(`Can't find this route: ${req.originalUrl}`, 400)); // Creat Error (Message, statusCode )
 });
 
-// Golabal error handling middleware
-app.use((err, req, res, next) => {
-  res.status(400).json({ err });
-});
+// Golabal error handling middleware for express ==> handle error return from express
+app.use(globalError);
 
-app.get("/", (req, res) => {
-  res.send("Welcome to the Ecommerce API V2");
-});
+// app.get("/", (req, res) => {
+//   res.send("Welcome to the Ecommerce API V2");
+// });
 
 // Start Server
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 8000;
+const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+// process.on(eventName, callback);
+// Events ==> list ==> callback(err)
+// Handle rejection outside express
+process.on("unhandledRejection", (err) => {
+  console.error(`UnhandleRejction Errors: ${err}`);
+  server.close(() => {
+    console.log(`Shutting down....`);
+    process.exit(1);
+  });
 });
