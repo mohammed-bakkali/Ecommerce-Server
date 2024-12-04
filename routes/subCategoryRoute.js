@@ -5,10 +5,10 @@ const router = express.Router();
 
 const { createSubCategory } = require("../services/subCategoryService");
 
-const { createsubCategoryValidator } = require("../utils/validators/subCategoryValidator");
+const { createSubCategoryValidator } = require("../utils/validators/subCategoryValidator");
 
 
-router.route("./").post(createsubCategoryValidator, createSubCategory);
+router.route("/").post(createSubCategoryValidator, createSubCategory);
 
 module.exports = router;
 
