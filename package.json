@@ -19,7 +19,7 @@
     "mongoose": "^8.8.1",
     "mongos": "^0.0.0",
     "morgan": "^1.10.0",
-    "slugify": "^1.6.6"
+    "slugify": "^1.6.6",
     "cross-env": "^7.0.3" 
   },
   "devDependencies": {
