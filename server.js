@@ -5,14 +5,14 @@ const path = require('path');
 const express = require('express');
 
 // Configure environment variables
-dotenv.config({ path: 'config.env' });
+dotenv.config({ path: path.resolve(__dirname, 'config.env') });
 
 const morgan = require('morgan');
 const colors = require('colors');
 const compression = require('compression');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 
+// Import custom modules
 const ApiError = require('./utils/apiError');
 const globalError = require('./middlewares/errorMiddleware');
 const mountRoutes = require('./routes');
@@ -33,7 +33,7 @@ app.use(compression()); // Compress responses
 // Webhook route (before body parsing middlewares)
 app.post(
   '/webhook-checkout',
-  bodyParser.raw({ type: 'application/json' }),
+  express.raw({ type: 'application/json' }),  // Use express.raw directly instead of body-parser
   webhookCheckout
 );
 
