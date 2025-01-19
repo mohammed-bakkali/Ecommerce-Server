@@ -11,7 +11,8 @@ const express = require('express');
 
 dotenv.config({ path: 'config.env' });
 const morgan = require('morgan');
-require('colors');
+const colors = require('colors');
+
 const compression = require('compression');
 const cors = require('cors');
 const bodyParser = require('body-parser');
