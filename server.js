@@ -14,6 +14,9 @@ const morgan = require('morgan');
 const colors = require('colors');
 
 const compression = require('compression');
+const compression = require('compression');
+app.use(compression());
+
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
